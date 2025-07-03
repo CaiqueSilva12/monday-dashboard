@@ -3,6 +3,37 @@ import { Project } from '../types/project';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
+// Axios interceptor to add JWT token to all requests
+axios.interceptors.request.use((config) => {
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
+
+// Axios response interceptor to handle 401 Unauthorized
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      // Don't redirect if the request is for login
+      !(error.config && error.config.url && error.config.url.includes('/auth/monday/redirect'))
+    ) {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const fetchProjects = async (): Promise<Project[]> => {
   const { data } = await axios.get(`${API_URL}/projects`);
   return data;

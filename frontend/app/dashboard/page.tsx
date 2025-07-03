@@ -5,10 +5,25 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { useQuery } from '@tanstack/react-query';
 import { fetchDashboardStats } from '../../services/projectService';
 import { ProjectOutlined, TeamOutlined, CalendarOutlined, TrophyOutlined } from '@ant-design/icons';
+import { useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Navigation from '@/components/Navigation';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
 export default function DashboardPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const token = searchParams.get('token');
+    if (token) {
+      localStorage.setItem('token', token);
+      // Remove token from URL for cleanliness
+      router.replace('/dashboard');
+    }
+  }, [router, searchParams]);
+
   const { data: stats, isLoading, error } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: fetchDashboardStats,
@@ -50,17 +65,13 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-6">
+      <Navigation />
       <div className="max-w-7xl mx-auto animate-fade-in">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold gradient-text mb-2">Dashboard</h1>
-          <p className="text-gray-600 text-lg">Welcome to your project overview</p>
-        </div>
 
         {/* Stats Cards */}
-        <Row gutter={[24, 24]} className="mb-8">
+        <Row gutter={[24, 24]} className="mb-10">
           <Col xs={24} sm={12} lg={6}>
-            <Card className="card-hover border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="card-hover border-0 shadow-lg bg-white/80 backdrop-blur-sm p-4">
               <Statistic
                 title={
                   <div className="flex items-center space-x-2">
@@ -84,7 +95,7 @@ export default function DashboardPage() {
           </Col>
           
           <Col xs={24} sm={12} lg={6}>
-            <Card className="card-hover border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="card-hover border-0 shadow-lg bg-white/80 backdrop-blur-sm p-4">
               <Statistic
                 title={
                   <div className="flex items-center space-x-2">
@@ -104,7 +115,7 @@ export default function DashboardPage() {
           </Col>
           
           <Col xs={24} sm={12} lg={6}>
-            <Card className="card-hover border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="card-hover border-0 shadow-lg bg-white/80 backdrop-blur-sm p-4">
               <Statistic
                 title={
                   <div className="flex items-center space-x-2">
@@ -124,7 +135,7 @@ export default function DashboardPage() {
           </Col>
           
           <Col xs={24} sm={12} lg={6}>
-            <Card className="card-hover border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="card-hover border-0 shadow-lg bg-white/80 backdrop-blur-sm p-4">
               <Statistic
                 title={
                   <div className="flex items-center space-x-2">
@@ -154,7 +165,7 @@ export default function DashboardPage() {
                   <span className="text-lg font-semibold">Projects Created per Month</span>
                 </div>
               }
-              className="card-hover border-0 shadow-lg bg-white/80 backdrop-blur-sm"
+              className="card-hover border-0 shadow-lg bg-white/80 backdrop-blur-sm p-4 mb-6"
             >
               <ResponsiveContainer width="100%" height={400}>
                 <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -200,7 +211,7 @@ export default function DashboardPage() {
                   <span className="text-lg font-semibold">Top Months</span>
                 </div>
               }
-              className="card-hover border-0 shadow-lg bg-white/80 backdrop-blur-sm"
+              className="card-hover border-0 shadow-lg bg-white/80 backdrop-blur-sm p-4 mb-6"
             >
               <ResponsiveContainer width="100%" height={400}>
                 <PieChart>

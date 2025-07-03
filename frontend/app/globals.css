@@ -76,9 +76,11 @@ body {
 
 /* Custom utility classes */
 .glass-effect {
-  background: rgba(255, 255, 255, 0.9);
+  background: linear-gradient(90deg, #c8ccd3cc 0%, #a1a2cecc 100%);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  padding-inline: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .card-hover {

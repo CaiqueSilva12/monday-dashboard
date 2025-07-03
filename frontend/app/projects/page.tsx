@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { fetchProjects, deleteProject } from '../../services/projectService';
 import { Project } from '../../types/project';
+import Navigation from '@/components/Navigation';
 
 const { Search } = Input;
 
@@ -138,27 +139,8 @@ export default function ProjectsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-6">
+      <Navigation />
       <div className="max-w-7xl mx-auto animate-fade-in">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="text-4xl font-bold gradient-text mb-2">Projects</h1>
-              <p className="text-gray-600 text-lg">
-                Manage and track all your projects in one place
-              </p>
-            </div>
-            <Button
-              type="primary"
-              size="large"
-              icon={<PlusOutlined />}
-              onClick={() => router.push('/projects/create')}
-              className="mt-4 sm:mt-0 bg-gradient-to-r from-blue-500 to-purple-600 border-0 hover:from-blue-600 hover:to-purple-700 shadow-lg"
-            >
-              Create Project
-            </Button>
-          </div>
-        </div>
 
         {/* Search and Filters */}
         <Card className="mb-6 border-0 shadow-lg bg-white/80 backdrop-blur-sm">
