@@ -59,3 +59,130 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+# Monday Dashboard Backend
+
+This is the backend for the Monday Dashboard application, built with Laravel and MySQL. It supports Monday.com OAuth login and JWT authentication.
+
+## Prerequisites
+- PHP 8.1+
+- Composer
+- Docker & Docker Compose
+- Node.js & npm (for frontend, if needed)
+- [ngrok](https://ngrok.com/) (for local OAuth testing)
+
+---
+
+## 1. Clone the Repository
+```sh
+git clone <your-repo-url>
+cd monday-dashboard/backend
+```
+
+---
+
+## 2. Install PHP Dependencies
+```sh
+composer install
+```
+
+---
+
+## 3. Copy and Configure Environment Variables
+```sh
+cp .env.example .env
+```
+- Edit `.env` and set your database credentials, JWT secret, and Monday.com OAuth credentials:
+  - `MONDAY_CLIENT_ID` and `MONDAY_CLIENT_SECRET` from your Monday.com developer app
+  - `MONDAY_REDIRECT_URI` (see ngrok section below)
+
+---
+
+## 4. Generate Laravel App Key
+```sh
+php artisan key:generate
+```
+
+---
+
+## 5. Run Docker (MySQL Database)
+```sh
+docker-compose up -d
+```
+- This will start a MySQL database on the default port (check `docker-compose.yml` for details).
+
+---
+
+## 6. Run Database Migrations
+```sh
+php artisan migrate
+```
+
+---
+
+## 7. Install and Configure JWT Auth
+```sh
+composer require tymon/jwt-auth
+php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
+php artisan jwt:secret
+```
+
+---
+
+## 8. Start the Laravel Backend
+```sh
+php artisan serve
+```
+- By default, this runs at `http://localhost:8000`
+
+---
+
+## 9. Expose Your Backend with ngrok (for Monday.com OAuth)
+Monday.com must be able to reach your backend for OAuth. Use ngrok to expose your local server:
+
+```sh
+ngrok http 8000
+```
+- Copy the HTTPS forwarding URL from ngrok (e.g., `https://abcd1234.ngrok.io`).
+
+---
+
+## 10. Set MONDAY_REDIRECT_URI in .env
+- In your `.env`, set:
+  ```
+  MONDAY_REDIRECT_URI=https://<your-ngrok-subdomain>.ngrok.io/auth/monday/callback
+  ```
+- This must match the Redirect URL in your Monday.com app settings.
+- **Why?** Monday.com needs a public URL to send the OAuth callback to your backend. ngrok provides this while developing locally.
+
+---
+
+## 11. Add Redirect URL to Monday.com App
+- In the Monday.com Developer Center, add the same ngrok URL to your app's Redirect URLs.
+
+---
+
+## 12. Test the Application
+- Go to your frontend login page and click "Login with Monday.com".
+- Complete the OAuth flow.
+- You should be redirected to your dashboard and authenticated.
+
+---
+
+## Troubleshooting
+- If you change your ngrok URL, update both `.env` and your Monday.com app settings.
+- If you see database errors, ensure Docker is running and migrations are up to date.
+- For SSL/cURL errors, make sure your PHP installation trusts CA certificates (see Laravel docs for Windows setup).
+
+---
+
+## Useful Commands
+- Restart Docker: `docker-compose restart`
+- Stop Docker: `docker-compose down`
+- View Laravel logs: `tail -f storage/logs/laravel.log`
+
+---
+
+## Security Note
+- Never commit your `.env` file or secrets to version control.
+- Use strong secrets for JWT and your Monday.com app.
